@@ -1,0 +1,32 @@
+fmod LIST is
+
+	including NAT .
+	sort List .
+	subsort Nat < List .
+
+---defirea operatorilor
+	op _ _ : List List -> List [assoc id: nil] .
+	op nil : -> List .
+	op _@_ : Nat List -> Bool .  ---apartenenta
+	op sterge(_, _) : Nat List -> List . 
+	op verifica(_, _, _) : List -> Bool .
+
+---definirea variabilelor
+	vars A B : Nat .
+	vars L1 L2 : List .
+
+---definirea "ecuatiilor"
+	eq nil L1 = L1 .
+
+	eq A@nil = false .
+	eq A@(A L1) = true . ---daca a este primul element din lista
+	eq A@(B L1) = A@L1 . ---practic parcurge lista recursiv pana cand A va fi "primul element"
+
+	eq sterge(A, (A, L1)) = L1 . ---sterge din lista elementul A
+	eq sterge(A, (B, L1)) = sterge(A, L1) ---sterge din lista L1 elementul A, atunci cand il gaseste recursiv
+
+	eq verifica(0, 0, L1) = false .
+	eq verifica(0, A, L1) = false .
+	eq verifica(B, A, L1) = if ( B <= A ) then ( B@L1 and verifica(s ( B ), A, L1 ) if (B <= A )) .
+
+endfm
