@@ -1,0 +1,118 @@
+Tipuri de bază: int (7), bool (true), real (3.5), string ("salut"), char ('a')
+
+Tipuri derivate:
+
+tipul tuplu: int * string * int
+tipuri parametrizate
+tipul listă: 'a list
+tipul referință: 'a ref
+tipul tablou: 'a array
+type 'a indexat = int * 'a 
+type ('a,'b') pair = 'a * 'b
+tipul înregistrare (record/struct)
+type persoana = { nume : string; varsta: int }
+let ion = {nume="Ionescu"; varsta=23}
+let ionel = {ion with varsta = 7}
+ionel.varsta
+let nume = function {nume=s} -> s
+nume ionel
+tipul record sta la baza sistemului de obiecte din OCaml
+Tipul variant
+
+La o primă vedere, tipul variant este un tip asemănător tipului enumerare din C: 
+
+type hobby = Fotbal | Citit | Sah | Chitara 
+Însă, în plus față de variantele simple ale unei enumerări, variantele pot avea argumente.  Tipul argumentului este postfixat variantei și introdus cu cuvântul cheie of 
+
+type carte = As | Rege | Regina | Valet | Jocker | Mica of int
+Mai mult,  deoarece tipul definit poate apărea ca prametru al unei variante, putem defini tipuri recursive.  Mai jos, este o definiție posibilă a unui tip pentru liste de întregi ca tip variant, folosind Vida în loc de [] și Cons în loc de :: 
+
+type lista_int = Vida | Cons of int * lista_int
+Bineînțeles, și tipurile variant pot fi parametrizate
+
+type 'a lista = Vida | Cons of 'a * 'a lista 
+Funcțiile se definesc prin discuție de caz asupra constructorilor (variantelor)
+
+let rec lungime = function
+  | Vida -> 0
+  | Cons(_,t) -> 1 + lungime t 
+În general, în cazul unui constructor recursiv, e.g., Cons, se evalueaza prin recursie valorile corespunzătoare parametrilor de tip recursiv, apoi se agreghează rezultatele în funcție de constructor și eventual restul argumentelor.
+
+Un tip util este tipul predefinit (parmetrizat) opțiune
+
+type 'a option = None | Some of 'a
+Acest tip e folosit ca tip rezultat pentru definirea funcțiilor parțiale (dacă vrem să evităm excepțiile) întrucât oferă și varianta None. De exemplu,
+
+let primul = function
+  | [] -> None
+  | h::_ -> Some of h 
+Exerciții
+
+Cosiderăm următoarea definiție de tip (al expresiilor logice cu variabile) și definiția a două expresii logice de tipul definit.
+
+type log = Bool of bool | Not of log | And of log * log | Var of string
+let e1 = Not(And(Not (Bool true), Not (Bool false)))
+let e2 = And(Not(And(Not (Bool true), Not (Var "x"))), Var "y")
+1.  Să se scrie o funcție string_of_log care ia ca argument o expresie logică și întoarce un șir de caractere care reprezintă frumos expresia.  Exemple de rulare:
+
+# string_of_log e1;;
+- : string = "!(!true && !false)"
+# string_of_log e2;;
+- : string = "(!(!true && !x) && y)"
+2. Să se scrie o funcție eval care  ia ca argument o expresie logică și întoarce valoarea ei de adevăr.  Dacă expresia conține variabile, va eșua.  Exemple:
+
+# eval e1;;
+- : bool = true
+# eval e2;;
+Exception: Failure "Expresia are variabile".
+3. Să se scrie o funcție evalueaza care ia ca argument o listă de perechi nume-valoare de adevăr și o expresie logică cu variabile și întoarce valoarea ei de adevăr.  Exemple
+
+# evalueaza [] e1;;
+- : bool = true
+# evalueaza [("x",true);("y",false)] e2;;
+- : bool = false
+# evalueaza [("x",true);("y",true)] e2;;
+- : bool = true
+4. Să se scrie o funcție simplifica care reduce o expresie logică la forma cea mai simplă. Exemple:
+
+# simplifica e1;;
+- : log = Bool true
+# simplifica e2;;
+- : log = Var "y"
+5*. Să se scrie o funcție transforma care ia ca argument o funcție de transformare (locală) și o expresie logică și întoarce expresia logică obținută prin aplicarea funcției de transformare dată fiecărei subexpresii de jos în sus.
+
+val transform : (log -> log) -> log -> log
+Exemple:
+
+# transforma (fun x -> Not(x)) e1;;
+- : log = Not (Not (Not (And (Not (Not (Not (Bool true))), Not (Not (Not (Bool false)))))))
+6. Să se folosească funcția transforma pentru a implementa funcția simplifică folosind o funcție de simplificare locală
+
+7*. Să se definească o funcție viziteaza care ia ca argument o funcție de agregare  și o expresie logică și întoarce valoarea agregată obținută vizitând toate subexpresiile (de jos în sus) și folosind funcția de agregare pentru a combina rezultatele. Funcția de agregare ia ca argumente o expresie logică și o listă de rezultate parțiale pentru subexpresiile directe și produce rezultatul agregat aferent expresiei logice date.
+
+val viziteaza : (log -> 'a list -> 'a) -> log -> 'a
+Exemple:
+
+Funcția string_of_log poate fi definită cu ajutorul lui viziteaza
+let str_fold log l = match (log,l) with
+  | (And _, [s1;s2]) -> "(" ^ s1 ^ " && " ^ s2 ^ ")"
+  | (Not _, [s]) -> "!" ^ s
+  | (Var s, []) -> s
+  | (Bool b, []) -> string_of_bool b
+let string_of_log = viziteaza str_fold
+Funcția evalueaza poate fi definită cu ajutorul lui viziteaza
+
+let eval_fold mem log l = match (log,l) with
+  | (And _, [b1;b2]) -> b1 && b2
+  | (Not _, [b]) -> not b
+  | (Bool b, []) -> b
+  | (Var x, []) -> lookup x mem
+let evalueaza mem = viziteaza (eval_fold mem)  
+ Funcția transforma poate fi definită cu ajutorul funcției viziteaza
+
+let trans_fold f log l = match (log,l) with
+  | (And _,[x;y]) -> f (And(x,y))
+  | (Not _,[x]) -> f (Not x)
+  | (e,[]) -> f e
+
+let transforma f = viziteaza (trans_fold f)

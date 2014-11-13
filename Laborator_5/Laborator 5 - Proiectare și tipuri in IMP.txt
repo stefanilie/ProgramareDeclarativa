@@ -1,0 +1,23 @@
+Acest laborator are scopul studierii modului în care deciziile de proiectare afectează semantica și sistemul de tipuri. 
+
+1. Dați o expresie (și o configurație) IMP care se poate executa dar care nu are tip
+
+# evaluate c;;
+- : e * (l * int) list = ...
+# type_and_run c;;
+Exception: Failure "Eroare de tip!  Verificati programul".
+
+
+2. Modificați regulile de tipuri ale lui IMP (infertype) și cele ale semanticii tranziționale (reduce) astfel încât atribuirea să devină o expresie de tip întreg care se evaluează la valoarea atribută (în loc de skip).
+
+# type_and_run (Secv(Atrib("x", Atrib("y", Int 3)), Op(Loc "x", Plus, Loc "y")),[("x",0);("y",0)]);;
+- : e * (l * int) list = (Int 6, [("x", 3); ("y", 3)])
+# type_and_run (Op(Atrib("x",Int 3), Mic, Int 7),[("x",10)]);;
+- : e * (l * int) list = (Bool true, [("x", 3)])
+# type_and_run (Op(Atrib("x",Int 3), Plus, Int 1),[("x",2)]);;
+- : e * (l * int) list = (Int 4, [("x", 3)])
+
+2*. Aceleași condiții ca mai sus, doar că atribuirea să se evalueze la valoarea dinaintea atribuirii
+
+# type_and_run (Atrib("x", Atrib("y", Loc "x")),[("x",3);("y",7)]);;
+- : e * (l * int) list = (Int 3, [("x", 7); ("y", 3)])

@@ -1,0 +1,132 @@
+Care este diferența între 
+
+# let f1 (x,y) = x + y;;
+si
+
+# let f2 x y = x + y;;
+Ce inseamna fiecare?  Cum se pot elimina tipurile produs? Care e avantajul?
+
+let incr = f2 1;;
+Evaluarea partiala a funcțiilor de ordin înalt.
+
+Exerciții:
+
+1. definiți o funcție plus care primește ca argumente 2 funcții și întoarce suma lor (ca funcție).
+
+val plus : (int -> int) -> (int -> int) -> (int -> int)
+exemplu:
+
+# let fa x = 3 * x;;
+val fa : int -> int = <fun>
+# let ga x = x * x;;
+val ga : int -> int = <fun>
+# let ha = plus fa ga;;
+val ha : int -> int = <fun>
+# ha 5;; 
+- : int = 40
+2. Definiți o funcție lift care primește ca argumente un operator pe numere întregi (gen f2 definit mai sus) si il „ridică“ la un operator pe funcții definite pe întregi cu valori în întregi.
+
+val lift : (int -> int -> int) -> (int -> int) -> (int -> int) -> (int -> int)
+De exemplu (lift f2) va avea același efect ca funcția plus definită mai sus.
+
+pentru testare:
+
+# let plus1 = lift f2;;
+# plus1 fa ga 5;;
+- : int = 40
+# let op1 x y = x * y + x + y;;
+val op1 : int -> int -> int = <fun>
+
+# let fop1 = lift op1;;
+# let hb = fop1 fa ga;;
+# hb 5;;
+- : int = 415 
+3. Definiți o funcție compune care ia ca argumente 2 funcții f și g și întoarce o funcție h care reprezintă compunerea lor (h = f º g).
+
+pentru testare:
+
+# let hc = compune fa ga;;
+val hc : int -> int = <fun>
+# hc 5;;
+- : int = 225
+Funcții recursive
+
+Recursie pe numere întregi
+
+1. Definiți o funcție (recursivă) factorial de un parametru n care întoarce n! 
+
+pentru testare:
+
+# factorial 5;;
+- : int = 120
+2. Definiți o funcție (recursivă) fibonacci de un parametru n care întoarce al n-ulea element din secvența Fibonacci
+
+# fibonacci 5;;
+- : int = 5
+2*. Definiția direct recursivă pentru fibonacci are complexitate  O(2^n).  Scrieți o definiție fib (tot recursivă) mai eficientă --- O(n)
+
+# fib 44;;
+- : int = 701408733
+Indicație: Folosiți o funcție ajutătoare fibaux care are 2 parametrii in plus pentru a memora 2 nr. consecutive din secvența Fibonacci.
+
+Recursie pe liste
+
+Scopul acestei secțiuni este acela de a deprinde tehnica recursiei în definirea operațiilor pe liste. De aceea, problemele de mai jos ar trebui rezolvate fără a folosi funcții din bibliotecile standard. 
+
+1. Definiți o funcție (nerecursivă) prim care ia ca argument o listă și întoarce primul element al listei (sau mesajul de eroare "Lista este vida") dacă lista nu are un prim element.
+
+# prim ["a";"b";"c"];;
+- : string = "a"
+# prim [];;
+Exception: Failure "Lista este vida".
+2. Definiți o funcție (recursivă) ultim care ia ca argument o listă și întoarce ultimul element al listei (sau mesajul de eroare "Lista este vida") dacă lista nu are un ultim element.
+
+# ultim ["a";"b";"c"];;
+- : string = "c"
+# ultim [];;
+Exception: Failure "Lista este vida".
+2*. Definiți o funcție (recursivă) penultim care ia ca argument o listă și întoarce penultimul element al listei (sau mesajul de eroare "Lista nu are suficiente elemente") dacă lista nu are un penultim element.
+
+# penultim ["a";"b";"c"];;
+- : string = "b"
+# penultim [1];;
+Exception: Failure "Lista nu are suficiente elemente".
+3. Definiți o funcție lungime care ia ca argument o listă și întoarce lungimea listei
+
+# lungime ["a";"b";"c"];;
+- : int = 3
+4. Definiți o funcție lipeste care ia ca argument două liste și întoarce lista obținută prin concatenarea celor 2 liste.
+
+# lipeste [1;2;3] [4;5;6];;
+- : int list = [1;2;3;4;5;6]
+5. Definiți o funcție recursivă inverseaza care ia ca argument o listă și calculează inversa ei, folosind ideea că invers(ww') = invers(w')invers(w).  Folosiți funcția lipeste definită mai sus pentru concatenarea listelor.
+
+# inverseaza [1;2;3];;
+- : int list = [3;2;1]
+6. Folosiți funcția #trace pentru a vizualiza numărul de apeluri ale funcției lipeste necesare pentru a inversa o listă folosind funcția definită mai sus.  Observați că numărul acesta crește pătratic în numărul de elemente al listei. Definiți o funcție invers care inversează o listă mai eficient.  Indicație: folosiți o funcție ajutătoare care intr-un parametru auxiliar ține inversa listei procesate până acum.
+
+7. Definiți o funcție apartine care ia ca argumente un element și o listă și spune dacă elementul aparține listei.
+
+# apartine 3 [1;2;3;4];;
+- : bool = true
+# apartine 7 [1;2;3;4];;
+- : bool = false
+8. Definiți o funcție afla care ia ca argumente un sir de caractere reprezentând un nume și o listă de perechi nume-valoare, și întoarce valoarea corespunzătoare din lista a numelui specificat.  Exemplu:
+
+# afla "x" [("a",3);("b",5); ("x",7)]
+- : int = 7 
+9. Definiți o funcție pozitie care ia ca argumente un element și o listă și întoarce poziția primei apariții a elementului în listă, sau -1 dacă elementul nu apare în listă.  Indicație: folosiți o funcție ajutătoare care într-un parametru auxiliar numără câte elemente din lista inițială au fost deja procesate.
+
+# pozitie 3 [1;2;3;4;3];;
+- : int = 3
+# pozitie 7 [1;2;3;4];;
+- : int = -1
+10. Definiți o funcție interclaseaza care ia ca argumente 2 liste cu elementele sortate și întoarce lista sortată obținută prin interclasarea celor 2 liste.
+
+# interclaseaza ["ana"; "are"; "mere"] ["gina"; "hare"; "pere"];;
+- : string list = ["ana"; "are"; "gina"; "hare"; "mere"; "pere"]
+11.  Definiți o funcție divide care ia ca argument o listă și întoarce o pereche de liste cu proprietatea că concatenarea lor este o permutare a listei inițiale (are aceleași elemente, nu neapărat în aceeasi ordine). Un exemplu posibil:
+
+# divide [1;2;3;4;5;6;7;8;9;10];;
+- : int list * int list = ([9; 7; 5; 3; 1], [10; 8; 6; 4; 2])
+12. Definiți funcția inter_sort care ia ca argument o listă și întoarce lista sortată folosind sortarea prin interclasare.
