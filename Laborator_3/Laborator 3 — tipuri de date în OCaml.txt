@@ -53,6 +53,8 @@ Cosiderăm următoarea definiție de tip (al expresiilor logice cu variabile) ș
 type log = Bool of bool | Not of log | And of log * log | Var of string
 let e1 = Not(And(Not (Bool true), Not (Bool false)))
 let e2 = And(Not(And(Not (Bool true), Not (Var "x"))), Var "y")
+
+
 1.  Să se scrie o funcție string_of_log care ia ca argument o expresie logică și întoarce un șir de caractere care reprezintă frumos expresia.  Exemple de rulare:
 
 # string_of_log e1;;
