@@ -47,6 +47,8 @@ rule token = parse
   | ['-']?['0'-'9']+ as lxm { INT(int_of_string lxm) }
   | '+'            { PLUS }
   | '-'            { MINUS }
+  | '*'            { MUL }
+  | '/'            { DIV }
   | "<="           { LTE }
   | '('            { LPAREN }
   | ')'            { RPAREN }
