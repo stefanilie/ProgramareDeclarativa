@@ -22,6 +22,8 @@ let parseError loc = raise (Lexer.ParseError loc)
 %token LTE
 %token ASGNOP DEREF
 %token PLUS
+%token MINUS
+/* pt ca lexeru cand analizeaza codul sa stie de tokenuri */
 %token LPAREN RPAREN
 %token EOF
 %right SEQ /* lowest precedence */
@@ -43,6 +45,9 @@ expr:
   | SKIP                       { Skip (location()) }
   | LPAREN expr RPAREN         { $2 }
   | expr PLUS expr             { Op ($1,Plus,$3, location()) }
+  | expr MINUS expr            { Op ($1,Minus,$3, location()) }
+  /* $1 tine locul lui expr, $2 lui MINUS si $3 lui expr. 
+  Location va retine locatia in cod in eventualitatea in care va aparea o eroare. */
   | DEREF LOC                  { Loc ($2, location()) }
   | LOC ASGNOP expr            { Atrib ($1,$3, location()) }
   | expr LTE expr              { Op ($1, Mic, $3, location()) }

@@ -20,10 +20,21 @@ let rec infertype m = function
   | Int (n,_) -> TInt
   | Bool (b,_) -> TBool
   | Op(e1,Plus,e2,_)
+  (* _ pentru location *)
     -> (match (infertype m e1, infertype m e2) with
+      (* match va verifica daca ce returneaza infertype(adica tipul lui e1 si e2)
+      este acelasi... *)
      | (TInt, TInt) -> TInt
+     (*...anume ambele TInt *)
      | (TInt, t) -> raise (TypeError (e2, TInt, t))
+     (* In caz contrar ridica(raise) eroare in cazul in care e2 e TInt si e1 e de tip t...*)
      | (t,_) -> raise (TypeError (e1, TInt, t)))
+     (*...sau in cazul in care e1 e TInt si e2 nu. *)
+  | Op(e1,Minus,e2,_)
+    -> (match (infertype m e1, infertype m e2) with
+    | (TInt, TInt) ->TInt
+    | (TInt, t) -> raise (TypeError (e2, TInt, t))
+    | (t,_) -> raise (TypeError (e1, TInt, t)))
   | Op(e1,Mic,e2,_) -> (match (infertype m e1, infertype m e2) with
      | (TInt, TInt) -> TBool
      | (TInt, t) -> raise (TypeError (e2, TInt, t))

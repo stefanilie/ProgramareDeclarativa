@@ -3,6 +3,7 @@ open ImpAST
 
 let rec reduce = function
   | (Op(Int (n1,_),Plus,Int (n2,_),loc),s) -> Some (Int (n1+n2,loc),s)             (*Op+*)
+  | (Op(Int (n1,_),Minus,Int (n2,_),loc),s) ->Some (Int (n1-n2,loc),s)             (*Op-*)
   | (Op(Int (n1,_),Mic,Int (n2,_),loc),s) -> Some (Bool (n1<=n2,loc),s)            (*Op<=*)
   | (Op(Int (n1,loc1),op,e2,loc),s) ->                                        (*OpD*)
     (match reduce (e2,s) with 

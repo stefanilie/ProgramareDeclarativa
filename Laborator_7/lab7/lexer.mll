@@ -46,6 +46,7 @@ rule token = parse
   | [' ' '\t' '\r' ]     { token lexbuf }     (* skip blanks *)
   | ['-']?['0'-'9']+ as lxm { INT(int_of_string lxm) }
   | '+'            { PLUS }
+  | '-'            { MINUS }
   | "<="           { LTE }
   | '('            { LPAREN }
   | ')'            { RPAREN }
