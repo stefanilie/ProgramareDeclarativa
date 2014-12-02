@@ -1,0 +1,7 @@
+ln := 10 ;
+ls := 0 ;
+while 1 <= !ln do
+  ls := !ls + !ln ;
+  ln := !ln - 1
+done
+
