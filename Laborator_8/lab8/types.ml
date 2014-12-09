@@ -2,10 +2,11 @@ open Mem
 open ImpAST
 
 (* types of expressions *)
-type tip = TInt | TBool | TUnit
+type tip = TInt | TBool | TUnit | TFloat
 
 let string_of_tip = function
   | TInt -> "int"
+  | TFLoat -> "float"
   | TBool -> "bool"
   | TUnit -> "unit"
 
@@ -19,6 +20,7 @@ exception LocError of string*locatie
 let rec infertype m = function
   | Int (n,_) -> TInt
   | Bool (b,_) -> TBool
+  | Float (f,_) ->TFloat
   | Op(e1,Plus,e2,_) 
   | Op(e1,Minus,e2,_) 
   | Op(e1,Mul,e2,_) 
