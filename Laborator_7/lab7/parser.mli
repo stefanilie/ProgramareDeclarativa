@@ -16,6 +16,8 @@ type token =
   | DEREF
   | PLUS
   | MINUS
+  | MUL
+  | DIV
   | LPAREN
   | RPAREN
   | EOF

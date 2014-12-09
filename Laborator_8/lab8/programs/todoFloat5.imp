@@ -1,0 +1,13 @@
+e := 0.0001;
+cr := -3/4.;
+ci := !e;
+zr := !cr;
+zi := !ci;
+n := 0;
+while !zr*!zr - !zi*!zi < 4 do
+  zr_old := !zr;
+  zr := !zr*!zr - !zi*!zi + !cr;
+  zi := 2*!zr_old*!zi + !ci;
+  n := !n + 1  
+done ;
+p := !n * !e
