@@ -15,6 +15,7 @@ let parseError loc = raise (Lexer.ParseError loc)
 %}
 %token <int> INT
 %token <string> LOC
+%token <float> FLOAT
 %token TRUE FALSE
 %token SEQ SKIP
 %token IF THEN ELSE
@@ -40,7 +41,7 @@ main:
     expr EOF                { $1 }
 ;
 expr:
-    INT                        { Int ($1,location()) }
+    INT                        { Int ($1,location()) }  
   | TRUE                       { Bool (true, location()) }
   | FALSE                      { Bool (false, location()) }
   | SKIP                       { Skip (location()) }

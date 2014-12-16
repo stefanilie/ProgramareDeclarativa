@@ -19,6 +19,7 @@ let string_of_op = function
 type expr =
   | Bool of bool * locatie
   | Int of int * locatie
+  | Float of float * locatie
   | Loc of string * locatie
   | Op of expr * op * expr * locatie
   | Atrib of string * expr * locatie
@@ -50,6 +51,7 @@ let rec string_of_expr = function
 let location = function
   | Int (_,l)
   | Bool (_,l)
+  | Float (_,l)
   | Loc (_,l)
   | Op (_, _, _,l)
   | Atrib (_,_,l)
@@ -71,7 +73,7 @@ let locations e =
     let rec locations locs = function
       | [] -> locs
       | e::exps -> (match e with
-          | Bool _ | Int _ | Skip _ -> locations locs exps
+          | Bool _ | Int _ | Float _ | Skip _ -> locations locs exps
           | Loc (l,_) -> locations (insert l locs) exps
           | Op(e1,_,e2,_) -> locations locs (e1::e2::exps)
           | Atrib(l,e,_) -> locations (insert l locs) (e::exps)

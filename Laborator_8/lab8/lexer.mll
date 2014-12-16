@@ -46,6 +46,7 @@ rule token = parse
     [ '\n' ] { incr_linenum lexbuf ; token lexbuf }
   | [' ' '\t' '\r' ]     { token lexbuf }     (* skip blanks *)
   | ['-']?['0'-'9']+ as lxm { INT(int_of_string lxm) }
+  | ['-']?['0'-'9']?['.']?['0'-'9']+ as lxm
   | '+'            { PLUS }
   | '-'            { MINUS }
   | '*'            { MUL }
