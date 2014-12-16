@@ -1,0 +1,3 @@
+let x : int ref = ref 7 in
+let y : float ref = ref 4.5 in
+()
