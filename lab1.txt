@@ -1,7 +1,0 @@
-Notare 30%lab - 2 teste (PC) - unu la jumate unu la sfarsit
-			  - media > 5 pt a intra in examen
-Problema:
--Specificatii de list de nr nat
-Deifniti: apartenenta, stergerea unui elemem
-Verificati daca lista data ca parametru este o permutare de nr nat.
-
