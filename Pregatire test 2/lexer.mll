@@ -70,6 +70,7 @@ let _ =
    ( "rec"          , REC );
    ( "in"           , IN );
    ( "ref"          , REF );
+   ( "object"       , OBJ); (* added by me*)
 ]
 
 }
