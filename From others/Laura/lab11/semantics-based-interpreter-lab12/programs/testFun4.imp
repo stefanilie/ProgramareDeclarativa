@@ -1,0 +1,5 @@
+let l1 = ref 0 in
+(fun (x : unit -> unit) -> l1 := 5 ; x() ; x()) (fun (x:unit) -> l1 := !l1 + 1) ;
+!l1
+
+(* 7 *)

@@ -1,0 +1,5 @@
+let truth = fun (x : int + bool) ->
+    match x with
+       InjL (x:int) -> if x < 0 then true else if 0 < x then true else false
+     | InjR (b:bool) -> b
+in truth (InjL 3 : int + bool)

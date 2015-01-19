@@ -1,0 +1,11 @@
+let x = ref (read_int ()) in
+let s = ref 0 in
+  while (1 <= !x) do
+     s := !s + !x ;
+     x := read_int ()
+  done ;
+  print_int !s
+
+(* Se introduc numere intregi, cate unul pe linie pana cand se introduce
+un numar mai mic ca 1. Programul calculeaza si afiseaza suma tuturor numerelor
+introduse (mai mari ca 0) *)

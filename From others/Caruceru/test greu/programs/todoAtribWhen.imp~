@@ -1,0 +1,5 @@
+let x = ref 0 in
+let y = ref 0 in
+  (x := (y := 1 ; !y) when 1 < !y) ;
+  !x
+(* Result should be 1 *)
