@@ -39,16 +39,16 @@ let rec infertype (m:(string*tip) list) : expr -> tip = function
   | PrintInt(e,_) -> (match(infertype m e) with
      | TInt -> TUnit
      | t -> raise (TypeError(e, TInt, t)))
-  | ReadInt(_) -> TInt
+  | ReadInt(_) -> TInt 
 
   | AtribWhen(e1,e2,e3,_)
      -> (match (infertype m e1, infertype m e2, infertype m e3) with
-     | (TRef t, t', TBool) when t = t' -> TUnit
+     | (TRef t, t', TBool) when t = t' -> TUnit  (*t=t' atunci cand e1 = e2 randu doi din tipuri*)
      | (TRef t, t', TBool) -> raise (TypeError(e2, t, t')) 
      | (TRef _,_,t') -> raise (TypeError(e3,TBool,t')) 
-     | (t,_,_) -> raise (TypeError(e1,TRef t,t)))
+     | (t,_,_) -> raise (TypeError(e1,TRef t,t)))  (*daca nu e referinta*)
 
-  | Deref (e,_)
+  | Deref (e,_)  
     -> (match (infertype m e) with
           | TRef t -> t
           | t -> raise (TypeError (e, TRef t, t)))

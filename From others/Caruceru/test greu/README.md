@@ -33,12 +33,12 @@ de atribuire conditionata data de sintaxa urmatoare:
 
 ## Sintaxa ##
 
-expr ::= expr := expr when expr
+expr ::= expr := expr when expr 
 
 Care este reprezentata in sintaxa abstracta folosind constructorul AtribWhen
 
 
-## Tipuri ##
+## Tipuri ## pai asta nu inteleg. aici zice ca eunu tre sa fie referinta la T. exact. sia sta ce inseamna?
 
   Gamma |= e1 : ref T   Gamma |= e2 : T  Gamma |= e3 : bool
   ---------------------------------------------------------

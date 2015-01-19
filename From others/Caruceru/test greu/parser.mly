@@ -24,14 +24,14 @@ let parseError loc = raise (Lexer.ParseError loc)
 %token <int> INT
 %token <float> FLOAT
 %token <string> VAR
-%token R_INT P_INT
+%token R_INT P_INT /*adaugat*/
 %token TRUE FALSE
 %token SEQ SKIP
 %token IF THEN ELSE
 %token WHILE DO DONE
 %token FOR
 %token LT LTE EQ
-%token ASGNOP DEREF WHEN
+%token ASGNOP DEREF WHEN /*si asta*/
 %token PLUS MINUS MUL DIV
 %token LPAREN RPAREN
 %token FUN COLON
@@ -131,11 +131,11 @@ expr:
   | expr MUL expr             { Op ($1,Mul,$3, location()) }
   | expr DIV expr             { Op ($1,Div,$3, location()) }
   | expr ASGNOP expr            { Atrib ($1,$3, location()) }
-  | expr ASGNOP expr WHEN expr  { AtribWhen ($1,$3,$5, location()) }
+  | expr ASGNOP expr WHEN expr  { AtribWhen ($1,$3,$5, location()) } /*adaugat*/
   | expr LTE expr              { Op ($1, Mic, $3, location()) }
   | expr LT expr              { Op ($1, MicS, $3, location()) }
   | expr SEQ expr              { Secv ($1,$3, location()) }
-  | P_INT expr                { PrintInt ($2, location()) }
+  | P_INT expr                { PrintInt ($2, location()) } /*adaugat*/
   | IF expr THEN expr ELSE expr %prec IFX
                                { If ($2, $4, $6, location()) }
   /* %prec IFX specifies that the expression on the IFX branch should have 
@@ -153,7 +153,7 @@ expr:
     However, the first tree does not respect the %prec IFX declaration for else
     as SEQ is direcly below if on the else branch, while in the precedence list
     SEQ is above IFX.
-  */
+  */ 
  
   | WHILE expr DO expr DONE    { While ($2, $4, location()) }
   | FOR LPAREN expr SEQ expr SEQ expr RPAREN expr %prec FORX
@@ -176,7 +176,7 @@ expr:
 
 funexpr:
   | INT                        { Int ($1,location()) }
-  | R_INT SKIP                 { ReadInt(location()) }
+  | R_INT SKIP                 { ReadInt(location()) } /*adaugat*/
   | FLOAT                      { Float ($1,location()) }
   | TRUE                       { Bool (true, location()) }
   | FALSE                      { Bool (false, location()) }

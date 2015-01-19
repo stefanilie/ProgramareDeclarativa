@@ -12,7 +12,7 @@ let is_val : expr -> bool = function
   | e -> is_fun e
 
 (** Implements the reduction rules specifying the operational semantics. *)
-let rec reduce = function
+let rec reduce = function 
   | (Op(Int (n1,_),Plus,Int (n2,_),loc),s) -> Some (Int (n1+n2,loc),s)
   | (Op(Float (f1,_),Plus,Float (f2,_),loc),s) -> Some (Float (f1+.f2,loc),s)
 
@@ -45,8 +45,7 @@ let rec reduce = function
     (match reduce (e1,s) with Some (e1',s') -> Some (Op(e1',op,e2,loc),s')
       | None -> None)
 
-
-  | (PrintInt(Int(n,_),loc), s) -> Some(print_int n; Skip loc, s)
+  | (PrintInt(Int(n,_),loc), s) -> Some(print_int n; Skip loc, s)  (*int(n,_) pt ca face cast si Skip loc pt ca sare peste*)
   | (PrintInt(e,loc),s) ->
     (match reduce(e,s) with
       | Some (e',s') -> Some (PrintInt(e',loc),s')
@@ -55,8 +54,8 @@ let rec reduce = function
   | (ReadInt(loc),s) -> Some(Int(read_int(), loc),s)
   | (AtribWhen(Loc(l,_), v, Bool(b,_), loc),s) when is_val v ->
     (match b with
-      | true -> Some(Skip loc, update(l,v) s)
-      | false -> Some(Skip loc, s)
+      | true -> Some(Skip loc, update(l,v) s) 
+      | false -> Some(Skip loc, s) 
     )
   | (AtribWhen(Loc(l,loc'),v,e3,loc),s) when is_val v ->
     (match reduce(e3,s) with
