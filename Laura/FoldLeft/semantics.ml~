@@ -122,7 +122,9 @@ let rec reduce = function
 		| Some(e3', s')-> Some(Flft(e1, e2, e3', loc),s')
 		| None -> None)						(**Evaluarea dupa primul argument, daca e functie, se evalueaza al treilea*)	  (*ADAUGAT*)
   | (Flft(e1, e2, e3, loc), s) 
-	->
+	-> (match reduce (e2, s) with 
+		| Some(f a b, e2, e2) -> Some(f e2 Fst(e3), f, e2, Snd(e3))
+		| None-> None)						(** Evaluarea dupa cele 2 argumente*)
   | _ -> None                                                    (*default*)
 
 

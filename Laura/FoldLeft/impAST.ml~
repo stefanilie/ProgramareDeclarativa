@@ -53,6 +53,7 @@ type tip = TInt
   | TRef of tip (** [TRef t] represents the type associated to references to 
                     memory locations storing elements of type t *)
   | TRec of string * tip * string * tip  (*ADAUGAT*) (**Asta e de forma asta pt ca asa e tipul structului.*)
+  | TFlft of tip * tip * tip	(*ADAUGAT*)
 
 (** Generates the string corresponding to the given expression of type tip *)
 let rec string_of_tip = function
@@ -63,7 +64,7 @@ let rec string_of_tip = function
   | TArrow (t1,t2) -> "(" ^ string_of_tip t1 ^ " -> " ^ string_of_tip t2 ^ ")"
   | TRef t -> string_of_tip t ^ " ref"
   | TRec (x,t1,y,t2) -> "{" ^ x ^ ":" ^ string_of_tip t1 ^ ";" ^ y ^ ":" ^ string_of_tip t2 ^ ";" ^ "}"  (*Tipuri record*)   (*ADAUGAT*)
-
+  | TFlft (t1, t2, t3) -> "(" ^ string_of_tip t1 ^ "," ^ string_of_tip t2 ^ "," ^ string_of_tip t3 ^ ")"   (*Tipuri FoldLeft*)   (*ADAUGAT*)
 
 (** The abstract type for representing IMP expressions *)
 type expr =                                    (** e ::= *)
@@ -112,7 +113,7 @@ let exps : expr -> expr list  = function
  | App(e1,e2,_) | Let (_,e1,e2,_) | LetRec (_,_,e1,e2,_) | Rec(_,e1,_,e2,_)   (*ADAUGAT*) (**  returneaza doar expresia, iar ce e dupa e2 e locatia. Fii atent cand 
 caomletezi aici pt ca trebuie sa pui in fct de cate valori va returna, in acest caz 2*)
    -> [e1;e2]
- | If(e1,e2,e3,_) | Flft(e1,e2,e3,_)
+ | If(e1,e2,e3,_) | Flft(e1, e2, e3, _)   (*ADAUGAT*) 
    -> [e1;e2;e3]
  | For(e1,e2,e3,e4,_)
    -> [e1;e2;e3;e4]

@@ -80,6 +80,9 @@ let rec infertype (m:(string*tip) list) : expr -> tip = function
   | Rec (x,e1,y,e2,_)                                  (*ADAUGAT*) (**infertype iti returneaza tipul de vvariabila mai mult sau mai putin*)
     -> (match (infertype m x, infertype m y) with (** te uiti pe readme la tipuri si in loc de e1 e2 vei intoarce t1 t2 ca in readme*)
 	   | (t1,t2) -> TRec(x,t1,y,t2))       
+  | Flft (e1, e2, e3, _) 
+	-> (match(infertype m e1, infertype m e2, infertype m e3) with
+	   | (t1, t2, t3)-> TFlft(TArrow(t1,TArrow(t2,t3)), t1, (t2,t1)))    (** facem infertype pe e1, e2, e3, si fac TFlft pe care l-am declarat eu, cu Tarrow, urmarin documentatia*)
   | e -> failwith ("Expression " ^ string_of_expr e ^ " not allowed in a program.") (**Eroare in caz ca se baga ceva gresit*)
 
 
