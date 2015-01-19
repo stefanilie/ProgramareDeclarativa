@@ -54,6 +54,13 @@ type tip = TInt
                     memory locations storing elements of type t *)
   | TRec of string * tip * string * tip  (*ADAUGAT*) (**Asta e de forma asta pt ca asa e tipul structului.*)
   | TFlft of tip * tip * tip	(*ADAUGAT*)
+  | TSum of tip * tip (** [TSum] encodes types associated to choices *)
+  | TBox of  tip (*ADAUGAT*)
+  | TUnbox (*ADAUGAT*)
+  | TPair of tip * tip (*ADAUGAT*)
+  | TFst (*ADAUGAT*)
+  | TSnd (*ADAUGAT*)
+
 
 (** Generates the string corresponding to the given expression of type tip *)
 let rec string_of_tip = function
@@ -65,6 +72,13 @@ let rec string_of_tip = function
   | TRef t -> string_of_tip t ^ " ref"
   | TRec (x,t1,y,t2) -> "{" ^ x ^ ":" ^ string_of_tip t1 ^ ";" ^ y ^ ":" ^ string_of_tip t2 ^ ";" ^ "}"  (*Tipuri record*)   (*ADAUGAT*)
   | TFlft (t1, t2, t3) -> "(" ^ string_of_tip t1 ^ "," ^ string_of_tip t2 ^ "," ^ string_of_tip t3 ^ ")"   (*Tipuri FoldLeft*)   (*ADAUGAT*)
+  (*Adaugat*)
+  | TSum (t1,t2) -> "(" ^ string_of_tip t1 ^ " + " ^ string_of_tip t2 ^ ")"
+  | TBox t1 -> string_of_tip t1
+  | TUnbox  -> "unbox"
+  | TPair (t1, t2) -> string_of_tip t1 ^ "*" ^ string_of_tip t2
+  | TFst -> "a * b -> a"
+  | TSnd -> "a * b -> b"
 
 (** The abstract type for representing IMP expressions *)
 type expr =                                    (** e ::= *)
@@ -88,6 +102,10 @@ type expr =                                    (** e ::= *)
   | Deref of expr * locatie                        (** | ! e *)
   | Atrib of expr * expr * locatie                 (** | e := e *)
   | Loc of int * locatie                           (** | l  {i as a value} *)
+  (*Match box unbox*)
+  | Match of expr * expr * expr * locatie          (** | match e with ... *)
+  | Boxed of expr * locatie
+  | Unbox of locatie
   (*Struct*)
   | Rec of string * expr * string * expr * locatie (** | {x = e1; y = e2;}*)  (*ADAUGAT*) (**Ce e mai sus dar cu locatie*)
   (*FoldLeft*)
@@ -107,19 +125,21 @@ let location = function
   | Var (_,l) | App (_,_,l) | Fun (_,_,_,l) | IntOfFloat l | FloatOfInt l
   | Let (_,_,_,l) | LetRec (_,_,_,_,l) | Rec(_,_,_,_,l) | Flft(_,_,_,_,l)  (*ADAUGAT*)  (** sunt 4 spatii pt ca un tip o variabila, un tip o variabila*)
   | InjL (_,_,l) | InjR (_,_,l) | Match (_,_,_,l) (*Adaugat*)
-  | Pair(_,_,l) | Fst(_,l) | Snd(_,l) (*Adaugat*) (*Ask laura*)
+  | Pair(_,_,l) | Fst(l) | Snd(l) (*Adaugat*) (*Ask laura*)
+  | Boxed (_,l) | Unbox (l)  (*Adaugat*)
   -> l
 
 (** Returns the list of (direct) subexpressions of a given expression *)
 let exps : expr -> expr list  = function
  | IntOfFloat _ | FloatOfInt _ | Bool _ | Int _ | Float _ | Loc _
- | Var _ | Skip _ 
+ | Var _ | Skip _ | Fst _ | Snd _ | Unbox _
    -> []
- | Ref (e,_) | Deref (e,_) | Fun(_,_,e,_) | Fst(e,_) | Snd(e,_) | InjL(e,_,_) | InjR(e,_,_)
+ | Ref (e,_) | Deref (e,_) | Fun(_,_,e,_) | InjL(e,_,_) | InjR(e,_,_) | Boxed(e,_)
    -> [e]
  | Atrib(e1,e2,_) | Op(e1,_,e2,_) | Secv(e1,e2,_) | While(e1,e2,_) 
  | App(e1,e2,_) | Let (_,e1,e2,_) | LetRec (_,_,e1,e2,_) | Rec(_,e1,_,e2,_)   (*ADAUGAT*) (**  returneaza doar expresia, iar ce e dupa e2 e locatia. Fii atent cand 
 caomletezi aici pt ca trebuie sa pui in fct de cate valori va returna, in acest caz 2*)
+ | Pair(e1, e2, _)
    -> [e1;e2]
  | If(e1,e2,e3,_) | Flft(e1, e2, e3, _) | Match(e1,e2,e3,_)  (*ADAUGAT*) 
    -> [e1;e2;e3]
@@ -148,13 +168,14 @@ let revExps : expr * expr list -> expr = function
    | (For(_,_,_,_,loc), [e1;e2;e3;e4]) -> For(e1,e2,e3,e4,loc)
    | (Rec(x,_,y,_,loc),[e1;e2]) -> Rec(x,e1,y,e2,loc)  (*ADAUGAT*) (**Substitutie. curs 7*)
    | (Flft(_,_,_,loc),[e1,e2,e3]) -> Flft(e1,e2,e3,loc) (*Adaugat*)
-(*Adaugat pear, fst si snd*)
+(*Adaugat boxed, pear, fst si snd*)
    | (InjL(_,t,loc),[e]) -> InjL(e,t,loc)
    | (InjR(_,t,loc),[e]) -> InjR(e,t,loc)
    | (Match(_,_,_,loc),[e1;e2;e3]) -> Match(e1,e2,e3,loc)
    | (Pair(_,_,loc),[e1;e2]) -> Pair(e1,e2,loc) 
    | (Fst(_,loc),[e]) -> Fst(e,loc)
    | (Snd(_,loc),[e]) -> Snd(e,loc)
+   | (Boxed(_,loc),[e1]) -> Boxed(e1,loc)
    | (e,_) ->  raise (MatchError ("ImpAST.revExps", location e))
 (** For example, 
     [revExps (Op(Int (3,l),Plus Var ("x",l)),  [Int(3,l);Int(7,l)]) =  
@@ -352,6 +373,7 @@ let string_of_expr e =
   | (Pair(_,_,_),[s1;s2]) -> "(" ^ s1 ^ "," ^ s2 ^ ")"
   | (Fst(_,_),[s]) -> "fst" ^ s 
   | (Snd(_,_),[s]) -> "snd" ^ s
+  | (Boxed _, [s1]) -> "box " ^ s1
   | _ ->  let (f,l,c,_,_) as loc = location e in 
              raise (MatchError ("ImpAST.string_of_expr", loc))
   in postVisit string_of_expr_fold e

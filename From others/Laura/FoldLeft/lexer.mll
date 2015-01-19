@@ -78,6 +78,8 @@ let _ =
    ( "InjR"         , INJR );
    ( "fst"          , FST );
    ( "snd"          , SND );
+   ( "box"          , BOX);
+   ( "unbox"          , UNBOX);
 ]
 
 }

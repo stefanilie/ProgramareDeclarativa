@@ -43,6 +43,9 @@ let parseError loc = raise (Lexer.ParseError loc)
 %token FST
 %token SND
 
+
+%token BOX
+%token UNBOX
 %token ARROW
 %token PCT   /*punct*/ 									 /*ADAUGAT*/
 %token CMM													/*ADAUGAT*/
@@ -131,6 +134,9 @@ tip:
   | LPAREN tip RPAREN          { $2 }
   | LAC tip RAC                { $2 }    						/*ADAUGAT e $2 pt ca iti returneaza tip, al doilea lucru din expesie*/
   | tip REF                    { TRef $1 }  /* reference type */
+  | tip PLUS tip              { TSum ($1, $3) }
+  | tip MUL tip         { TPair ($1, $3) }
+  | BOX tip                   { TBox $2 }
 
 expr:
   | expr PLUS expr             { Op ($1,Plus,$3, location()) }
@@ -190,12 +196,8 @@ expr:
        INJR LPAREN VAR COLON tip RPAREN ARROW expr
                                { Match($2, Fun($6, $8, $11, location()),
                                            Fun($15, $17, $20, location()), 
-                                           location()) 
+                                           location()) }
    /* For simplicity, the cases of match are encoded as function declarations */
-   
-  | FST expr                   {Fst($2,location())},
-  | SND expr                   {Snd($2,location())},
-
   | error                      { parseError (location ()) }
 ;
 
@@ -209,6 +211,10 @@ funexpr:
   | INT_CAST                   { IntOfFloat (location()) }
   | FLOAT_CAST                 { FloatOfInt (location()) }
   | LPAREN expr RPAREN         { $2 }
+  | FST                        { Fst (location()) }
+  | SND                        { Snd(location())  }
+  | UNBOX                      { Unbox (location()) }
+  | LPAREN expr COMMA expr RPAREN { Pair($2, $4, location()) }
   /* having expression between parens here says that one can have any
      expression as argument to a function application if the expression
      is wrapped in parentheses */

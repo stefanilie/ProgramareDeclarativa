@@ -89,10 +89,6 @@ let rec infertype (m:(string*tip) list) : expr -> tip = function
   | Flft (e1, e2, e3, _) 
   -> (match(infertype m e1, infertype m e2, infertype m e3) with
      | (t1, t2, t3)-> TFlft(TArrow(t1,TArrow(t2,t3)), t1, TMul(t2,t1)))    (** facem infertype pe e1, e2, e3, si fac TFlft pe care l-am declarat eu, cu Tarrow, urmarin documentatia*)
-  | Fst(e,_) -> ( match (infertype m e) with 
-                  TMul(t1,t2) -> t1)        (*ADAUGAT*)
-  | Snd(e,_) -> ( match (infertype m e) with 
-                  TMul(t1,t2) -> t2)        (*ADAUGAT*)
   | Pair (e1, e2, _)
   -> TPair (infertype m e1, infertype m e2) with
               (t1, t2) -> TMul(t1,t2)  (*ADAUGAT*)  (*tipul pair*)

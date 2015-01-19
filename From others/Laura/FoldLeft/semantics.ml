@@ -8,7 +8,7 @@ let is_fun : expr -> bool = function
 
 (** Returns true when the expression is a value *)
 let is_val : expr -> bool = function
-  | Bool _ | Int _ | Float _ | Loc _ | Skip _ -> true
+  | Bool _ | Int _ | Float _ | Loc _ | Skip _ | Pair _ | Boxed -> true 
   | e -> is_fun e
 
 
@@ -97,6 +97,17 @@ let rec reduce = function
   | (App (e1, e2, loc), s)                                      (*AppS*)
      -> (match reduce (e1,s) with Some (e1',s') -> Some (App(e1',e2,loc),s')
       | None -> None)
+
+  | (App (Fst _, Pair (e1, _, _), loc), s)
+  -> Some (e1, s)
+  | (App (Snd _, Pair (_, e2, _ ), loc), s)
+    -> Some (e2, s)
+  | (App (Unbox _, Boxed (e1,_),loc),s) when is_val e1 -> Some(e1,s)
+  | (App (Unbox loc1, Boxed (e1,loc2),loc),s)
+    -> (match reduce (e1,s) with 
+                             |  Some (e1',s') -> Some(App(Unbox loc1, Boxed(e1',loc2),loc),s')
+                             |  None -> None)
+
   | (Let (x, e2, e1, loc), s)                                   (*LetS*)
      -> (match reduce (e2,s) with 
            |Some (e2',s') -> Some (Let (x,e2',e1,loc),s')
@@ -133,7 +144,6 @@ let rec reduce = function
 		| Some(f a b, e2, e2) -> Some(f e2 Fst(e3), f, e2, Snd(e3))
 		| None-> None)						(** Evaluarea dupa cele 2 argumente*)
 
-
   | (Pair(e1,e2,loc),s) when is_val e2                                         (*PairS*)
   -> (match reduce (e1,s) with
     | Some (e1',s') -> Some (Pair(e1',e2,loc),s')
@@ -142,22 +152,6 @@ let rec reduce = function
   | (Pair(e1,e2,loc),s) when is_val e1                                            (*PairD*)
   -> (match reduce (e2,s) with
     | Some (e2',s') -> Some (Pair(e1,e2',loc),s')
-    | None -> None)
-
-  | (Fst(Pair(e1,e2,_),loc),s) when is_val e1                                     (*Fst*)
-  -> Some (e1,s)
-
-  | (Snd(Pair(e1,e2,_),loc),s) when is_val e2                                     (*Snd*)
-  -> Some (e2,s) 
-
-  | (Fst(e, loc), s)                                                            (*FstS*)
-  -> (match reduce (e,s) with
-    | Some (e',s') -> Some (Fst(e',loc),s')
-    | None -> None)
-
-  | (Snd(e, loc), s)                                                           (*SndS*)
-  -> (match reduce (e,s) with
-    | Some (e',s') -> Some (Snd(e',loc),s')
     | None -> None)
   | _ -> None                                                       (*default*)
 
