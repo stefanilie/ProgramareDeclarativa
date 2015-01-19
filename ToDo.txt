@@ -1,0 +1,5 @@
+PD shit TO DO:
+1. Subiect read_/print_int()
+2. Merge pe materiale
+3. Select * from Laura where laura.telefon=available and nvl(cristos, 'ciorba');
+4. Somn.

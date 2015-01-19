@@ -70,6 +70,7 @@ let _ =
    ( "rec"          , REC );
    ( "in"           , IN );
    ( "ref"          , REF );
+   ( "flft"          , FLFT);
 ]
 
 }
@@ -109,7 +110,7 @@ rule token = parse
   | ';'            { SEQ }
   | '!'            { DEREF }
   | '.'            { PCT }   (*ADAUGAT*)
-  | ','          
+  | ','            { CMM }  (*ADAUGAT*)
   (*  next is a list of non-keyword symbols we want our language to have *)
   | ['A'-'Z' 'a'-'z'] ['A'-'Z' 'a'-'z' '0'-'9' '_'] * as id
                    { try Hashtbl.find keyword_table id 
@@ -131,4 +132,4 @@ and comments level = parse
                 (* skip line breaks, but still increment lines *)
   | _           { comments level lexbuf }
     (* skip everything else inside the comment *)
-  | eof         { raise End_of_file }
+  | eof         { raise End_of_file }
