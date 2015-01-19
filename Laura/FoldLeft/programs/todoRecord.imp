@@ -1,0 +1,2 @@
+let salariuNou = fun (x:{ salariu : int ; licentiat :bool; })  -> if x. licentiat then x.salariu + 100 else x. salariu
+in salariuNou {salariu=2000; licentiat =true; }

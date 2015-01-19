@@ -1,0 +1,5 @@
+ln := 1000;
+for (lx := 1; !lx <= !ln; lx := !lx + 1)
+  ly := !ly + !lx ;
+ln := !ln - 1
+

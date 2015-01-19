@@ -1,0 +1,1 @@
+fun (a:int->int->(int->int)->(int->int)->int->int) -> fun (b:int) -> fun (c:int->int) -> fun (d:int) -> fun (e:int->int) -> fun (f:int->int->int) -> fun (g:int) -> a b (c d) e (f g)

@@ -1,0 +1,8 @@
+let n = ref 1000 in
+let x = ref 0 in
+let y = ref 0 in
+for (x := 1; !x <= !n; x := !x + 1)
+  y := !y + !x ;
+n := !n - 1 ;
+!y
+

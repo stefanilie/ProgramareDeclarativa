@@ -1,0 +1,1 @@
+Z (fun (g:int->int) -> fun (x:int) -> if x <= 0 then 1 else x * g (x - 1)) 10

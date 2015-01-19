@@ -1,0 +1,4 @@
+(fun (x : unit) -> l1 := 5 ; x ; x) (l1 := !l1 + 1)
+
+// trebuie sa se evalueze la (), l1 |-> 5
+

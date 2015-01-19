@@ -1,0 +1,14 @@
+let e = 0.0001 in
+let cr = -3./4. in
+let ci = e in
+let zr = ref cr in
+let zi = ref ci in
+let n = ref 0 in
+while !zr*!zr - !zi*!zi < 4. do
+  let zr_old = !zr in
+    zr := !zr*!zr - !zi*!zi + cr;
+    zi := 2.*zr_old*!zi + ci;
+    n := !n + 1
+done ;
+float_of_int !n * e
+

@@ -1,0 +1,4 @@
+ln := 100;
+if (!ln <= 100) then skip else
+  ly := !ly + !lx ;
+ln := !ln + -1

@@ -1,0 +1,13 @@
+lfe := 0.0001;
+lfcr := -3./4.;
+lfci := !lfe;
+lfzr := !lfcr;
+lfzi := !lfci;
+ln := 0;
+while !lfzr*!lfzr - !lfzi*!lfzi < 4. do
+  lfzr_old := !lfzr;
+  lfzr := !lfzr*!lfzr - !lfzi*!lfzi + !lfcr;
+  lfzi := 2.*!lfzr_old*!lfzi + !lfci;
+  ln := !ln + 1
+done ;
+lfp := float_of_int !ln * !lfe

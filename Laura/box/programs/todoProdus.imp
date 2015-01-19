@@ -1,0 +1,2 @@
+let max = fun (p : int * int) -> if fst p < snd p then snd p else fst p
+in max (5,4)

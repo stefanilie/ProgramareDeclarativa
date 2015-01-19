@@ -1,0 +1,6 @@
+(fun (m : (int->int)->int->int) -> fun (n:(int->int)->int->int) -> fun (f:int->int) -> fun (x:int) -> m f (n f x)) (* plus *)
+(fun (f:int->int) -> fun (x:int) -> f ( f ( f (f x)))) (* 4 *)
+(fun (f:int->int) -> fun (x:int) -> f ( f ( f x))) (* 3 *)
+(fun (x:int) -> x + 1)  
+ 0
+(* 7 *)

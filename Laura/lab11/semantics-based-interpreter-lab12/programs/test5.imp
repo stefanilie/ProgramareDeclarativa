@@ -1,0 +1,7 @@
+let x = 10 in
+let y = ref 20 in
+let n = ref 100 in
+if (!n <= 100) then () else
+  y := !y + x ;
+n := !n + -1 ;
+!n
