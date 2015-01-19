@@ -113,6 +113,16 @@ let rec reduce = function
 		 |None -> None)
   | (Rec (x, e1, y, e2, loc), s) when is_val e2                (*e1 si e2 sunt valori*)  (*ADAUGAT*)
      -> Some (Rec (x,e1,y,e2,loc),s)
+  | (Flft(e1, e2, e3, loc), s)
+	-> (match reduce(e1,s) with
+		|Some(e1', s') -> Some(Flft(e1', e2, e3, loc), s'))
+	    |None->None)							(**Evaluarea primului argument*)   (*ADAUGAT*)
+  | (Flft(e1, e2, e3, loc), s) when is_fun e1
+	-> (match reduce(e3, s) with
+		| Some(e3', s')-> Some(Flft(e1, e2, e3', loc),s')
+		| None -> None)						(**Evaluarea dupa primul argument, daca e functie, se evalueaza al treilea*)	  (*ADAUGAT*)
+  | (Flft(e1, e2, e3, loc), s) 
+	->
   | _ -> None                                                    (*default*)
 
 
